@@ -1,6 +1,8 @@
 # Prompter
 
+![](https://raw.githubusercontent.com/mattn/vim-prompter/master/data/logo.png)
 
+![](https://raw.githubusercontent.com/mattn/vim-prompter/master/data/screenshot.gif)
 
 ## Usage
 
