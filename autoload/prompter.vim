@@ -30,6 +30,7 @@ function! prompter#input(...)
   let decide = 0
   try
     while 1
+      redraw
       exe "echohl " . color | echon base
       echohl Normal | echon input[0]
       echohl Constant | echon input[1]
@@ -38,7 +39,6 @@ function! prompter#input(...)
 	  if empty(input[1])
 		echohl Constant | echon '_' | echohl None
       endif
-      redraw
       let nr = getchar()
       let chr = !type(nr) ? nr2char(nr) : nr
       let last = input
