@@ -1,3 +1,7 @@
+function! prompter#ready()
+  return 1
+endfunction
+
 function! s:getopt(params, key, def)
   if type(a:params) == type({})
     return get(a:params, a:key, a:def)
@@ -36,8 +40,8 @@ function! prompter#input(...)
       echohl Constant | echon input[1]
       echohl Normal | echon input[2]
       echohl None
-	  if empty(input[1])
-		echohl Constant | echon '_' | echohl None
+      if empty(input[1])
+        echohl Constant | echon '_' | echohl None
       endif
       let nr = getchar()
       let chr = !type(nr) ? nr2char(nr) : nr
@@ -52,19 +56,22 @@ function! prompter#input(...)
         let decide = 1
         break
       elseif chr == "\<BS>" || chr == "\<C-H>"
+        if empty(input[0])
+          break
+        endif
         let [input[0], _] = [substitute(input[0], '.$', '', ''), 1]
         let changed = 1
       elseif chr == "\<C-W>"
-	    let input = ['', '', '']
+        let input = ['', '', '']
         let changed = 1
       elseif chr == "\<Home>" || chr == "\<C-A>"
         let s = join(input, '')
-	    let input = ['', matchstr(s, '^.'), substitute(s, '^.', '', '')]
+        let input = ['', matchstr(s, '^.'), substitute(s, '^.', '', '')]
       elseif chr == "\<End>" || chr == "\<C-E>"
-	    let input = [join(input, ''), '', '']
+        let input = [join(input, ''), '', '']
       elseif chr == "\<Left>"
-	    if !empty(input[0])
-		  let input = [substitute(input[0], '.$', '', ''), matchstr(input[0], '.$'), input[1] . input[2]]
+        if !empty(input[0])
+          let input = [substitute(input[0], '.$', '', ''), matchstr(input[0], '.$'), input[1] . input[2]]
         endif
       elseif chr == "\<Right>"
         let input = [input[0] . input[1], matchstr(input[2], '^.'), substitute(input[2], '^.', '', '')]
@@ -76,15 +83,17 @@ function! prompter#input(...)
     let result = join(input, '')
     redraw
     if decide
-      echohl Comment | echon base
+      redraw
+      exe "echohl " . color | echon base
       echohl Normal | echon result
       echohl None
-      redraw
       let tmp = s:fire(params, 'on_enter', [input])
       if type(tmp) == type('')
         let result = tmp
       endif
     else
+      redraw
+      echo
       let result = ''
       call s:fire(params, 'on_cancel', [input])
     endif
