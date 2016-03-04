@@ -26,12 +26,15 @@ function! prompter#input(...)
   set guicursor=a:NONE
 
   let params = a:0 > 0 ? a:1 : ''
-  let base = s:getopt(params, 'prompt', string(params))
+  let base = s:getopt(params, 'prompt', empty(params) ? '' : string(params))
   let color = s:getopt(params, 'color', 'Comment')
+  let histtype = s:getopt(params, 'histtype', '')
+  let hist = histtype =~ '^[:/=@>]$' ? map(range(1, &history), 'histget(histtype, v:val * -1)') : []
   let C = s:getopt(params, 'on_change', '')
 
   let input = ['', '', '']
   let decide = 0
+  let histpos = -1
   try
     while 1
       redraw
@@ -69,6 +72,20 @@ function! prompter#input(...)
         let input = ['', matchstr(s, '^.'), substitute(s, '^.', '', '')]
       elseif chr == "\<End>" || chr == "\<C-E>"
         let input = [join(input, ''), '', '']
+      elseif chr == "\<Up>"
+        if len(hist) > 0
+          let histpos += 1
+          let histpos = histpos % len(hist)
+          let input = [hist[histpos], '', '']
+          let changed = 1
+        endif
+      elseif chr == "\<Down>"
+        if len(hist) > 0
+          let histpos -= 1
+          let histpos = histpos % len(hist)
+          let input = [hist[histpos], '', '']
+          let changed = 1
+        endif
       elseif chr == "\<Left>"
         if !empty(input[0])
           let input = [substitute(input[0], '.$', '', ''), matchstr(input[0], '.$'), input[1] . input[2]]
@@ -90,6 +107,9 @@ function! prompter#input(...)
       let tmp = s:fire(params, 'on_enter', [input])
       if type(tmp) == type('')
         let result = tmp
+      endif
+      if histtype =~ '^[:/=@>]$'
+        call histadd(histtype, result)
       endif
     else
       redraw
