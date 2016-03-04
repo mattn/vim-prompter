@@ -74,13 +74,13 @@ function! prompter#input(...)
         let input = [join(input, ''), '', '']
       elseif chr == "\<Up>"
         if len(hist) > 0
-          let histpos = min([histpos+1, len(hist)])
+          let histpos = min([histpos+1, len(hist)-1])
           let input = [hist[histpos], '', '']
           let changed = 1
         endif
       elseif chr == "\<Down>"
         if len(hist) > 0
-          let histpos = min([0, abs(histpos-1)])
+          let histpos = max([0, abs(histpos-1)])
           let histpos = histpos % len(hist)
           let input = [hist[histpos], '', '']
           let changed = 1
