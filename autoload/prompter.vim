@@ -26,8 +26,10 @@ function! prompter#input(...)
   set guicursor=a:NONE
 
   let params = a:0 > 0 ? a:1 : ''
-  let base = s:getopt(params, 'prompt', empty(params) ? '' : string(params))
-  let color = s:getopt(params, 'color', 'Comment')
+  let prompt = s:getopt(params, 'prompt', empty(params) ? '' : string(params))
+  let prompt_color = s:getopt(params, 'prompt_color', 'Comment')
+  let cursor = s:getopt(params, 'cursor', '_')
+  let cursor_color = s:getopt(params, 'cursor_color', 'StatusLine')
   let histtype = s:getopt(params, 'histtype', '')
   let hist = histtype =~ '^[:/=@>]$' ? map(range(1, &history), 'histget(histtype, v:val * -1)') : []
   let C = s:getopt(params, 'on_change', '')
@@ -38,13 +40,13 @@ function! prompter#input(...)
   try
     while 1
       redraw
-      exe "echohl " . color | echon base
+      exe "echohl " prompt_color | echon prompt
       echohl Normal | echon input[0]
-      echohl Constant | echon input[1]
+      exe "echohl" cursor_color | echon input[1]
       echohl Normal | echon input[2]
       echohl None
       if empty(input[1])
-        echohl Constant | echon '_' | echohl None
+        exe "echohl " cursor_color | echon cursor | echohl None
       endif
       let nr = getchar()
       let chr = !type(nr) ? nr2char(nr) : nr
@@ -100,7 +102,7 @@ function! prompter#input(...)
     redraw
     if decide
       redraw
-      exe "echohl " . color | echon base
+      exe "echohl " . prompt_color | echon prompt
       echohl Normal | echon result
       echohl None
       let tmp = s:fire(params, 'on_enter', [input])
