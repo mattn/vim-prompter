@@ -108,6 +108,9 @@ function! prompter#input(...)
         let result = tmp
       endif
       if histtype =~ '^[:/=@>]$'
+        if histtype == '/'
+          let @/ = result
+        endif
         call histadd(histtype, result)
       endif
     else
