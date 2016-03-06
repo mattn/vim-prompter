@@ -96,6 +96,9 @@ function! prompter#input(...)
       elseif chr == "\<Right>"
         let input = [input[0] . input[1], matchstr(input[2], '^.'), substitute(input[2], '^.', '', '')]
       endif
+      if chr != "\<Up>" && chr != "\<Down>"
+        let histpos = -1
+      endif
       call s:fire(params, 'on_change', [input])
     endwhile
   catch
