@@ -39,6 +39,7 @@ function! prompter#input(...)
   let input = [text, '', '']
   let decide = 0
   let histpos = -1
+  let cmplpos = -1
   try
     while 1
       redraw
@@ -68,6 +69,24 @@ function! prompter#input(...)
         endif
         let [input[0], _] = [substitute(input[0], '.$', '', ''), 1]
         let changed = 1
+      elseif chr == "\<Tab>"
+        if cmplpos == -1
+          let cmpl = s:fire(params, 'on_complete', [input])
+        endif
+        if len(cmpl) > 0
+          let cmplpos = cmplpos < len(cmpl) - 1 ? cmplpos + 1 : 0
+          let input = [cmpl[cmplpos], '', '']
+          let changed = 1
+        endif
+      elseif chr == "\<S-Tab>"
+        if cmplpos == -1
+          let cmpl = s:fire(params, 'on_complete', [input])
+        endif
+        if len(cmpl) > 0
+          let cmplpos = cmplpos > 0 ? cmplpos - 1 : len(cmpl) - 1
+          let input = [cmpl[cmplpos], '', '']
+          let changed = 1
+        endif
       elseif chr == "\<C-W>"
         let input = ['', '', '']
         let changed = 1

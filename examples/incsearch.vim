@@ -8,10 +8,15 @@ function! s:on_enter(input)
   echohl Warning | echo "WHY JAPANESE PEOPLE!: " . join(a:input, '') | echohl None
 endfunction
 
+function! s:complete(input)
+  return split(glob(a:input[0] . '*'), "\n")
+endfunction
+
 call prompter#input({
 \ 'color': 'Normal',
 \ 'prompt': '/',
 \ 'text': '/',
+\ 'on_complete': function('s:complete'),
 \ 'on_enter':  function('s:on_enter'),
 \ 'on_change':  function('s:on_change'),
 \})
