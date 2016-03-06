@@ -32,7 +32,6 @@ function! prompter#input(...)
   let cursor_color = s:getopt(params, 'cursor_color', 'StatusLine')
   let histtype = s:getopt(params, 'histtype', prompt)
   let hist = histtype =~ '^[:/=@>]$' ? map(range(1, &history), 'histget(histtype, v:val * -1)') : []
-  let C = s:getopt(params, 'on_change', '')
 
   let input = ['', '', '']
   let decide = 0
