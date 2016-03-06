@@ -22,6 +22,10 @@ When give String for the argument of `prompter#input()`, it is used as prompt st
 |on_enter |callback function triggered with decided |
 |on_cancel|callback function triggered with canceled|
 
+## TODO
+
+* completion
+
 ## License
 
 MIT

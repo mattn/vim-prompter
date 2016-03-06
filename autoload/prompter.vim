@@ -26,14 +26,17 @@ function! prompter#input(...)
   set guicursor=a:NONE
 
   let params = a:0 > 0 ? a:1 : ''
-  let prompt = s:getopt(params, 'prompt', empty(params) ? '' : string(params))
+  let prompt = s:getopt(params, 'prompt', empty(params) ? '' : type(params) == type('') ? params : string(params))
   let prompt_color = s:getopt(params, 'prompt_color', 'Comment')
   let cursor = s:getopt(params, 'cursor', '_')
   let cursor_color = s:getopt(params, 'cursor_color', 'StatusLine')
   let histtype = s:getopt(params, 'histtype', prompt)
   let hist = histtype =~ '^[:/=@>]$' ? map(range(1, &history), 'histget(histtype, v:val * -1)') : []
 
-  let input = ['', '', '']
+  let text = a:0 <= 1 ? '' : type(a:2) == type('') ? a:2 : string(a:2)
+  let text = s:getopt(params, 'text', empty(text) ? '' : text)
+
+  let input = [text, '', '']
   let decide = 0
   let histpos = -1
   try
