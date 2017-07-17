@@ -36,6 +36,9 @@ function! prompter#input(...)
   let text = a:0 <= 1 ? '' : type(a:2) == type('') ? a:2 : string(a:2)
   let text = s:getopt(params, 'text', empty(text) ? '' : text)
 
+  let cmplfunc = a:0 <= 2 ? 0 : type(a:3) == type(function('tr')) ? a:3 : function(a:3)
+  let cmplfunc = s:getopt(params, 'complete', cmplfunc)
+
   let input = [text, '', '']
   let decide = 0
   let histpos = -1
@@ -71,7 +74,11 @@ function! prompter#input(...)
         let changed = 1
       elseif chr == "\<Tab>"
         if cmplpos == -1
-          let cmpl = s:fire(params, 'on_complete', [input])
+          if type(cmplfunc) == type(0)
+            let cmpl = s:fire(params, 'on_complete', [input])
+          else
+            let cmpl = s:fire(cmplfunc, 'on_complete', [input])
+          endif
         endif
         if len(cmpl) > 0
           let cmplpos = cmplpos < len(cmpl) - 1 ? cmplpos + 1 : 0
