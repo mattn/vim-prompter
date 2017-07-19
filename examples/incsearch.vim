@@ -15,7 +15,6 @@ endfunction
 call prompter#input({
 \ 'color': 'Normal',
 \ 'prompt': '/',
-\ 'text': '/',
 \ 'on_complete': function('s:complete'),
 \ 'on_enter':  function('s:on_enter'),
 \ 'on_change':  function('s:on_change'),
