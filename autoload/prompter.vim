@@ -136,7 +136,11 @@ function! prompter#input(...)
       exe "echohl " . prompt_color | echon prompt
       echohl Normal | echon result
       echohl None
-      let tmp = s:fire(params, 'on_enter', [input])
+      if !empty(s:getopt(params, 'on_enter', ''))
+        let tmp = s:fire(params, 'on_enter', [input])
+      else
+        let tmp = input
+      endif
       if type(tmp) == type('')
         let result = tmp
       endif
